@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.ContentLoadingProgressBar;
@@ -65,7 +66,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void makeNetworkCall(String sortingOption) {
+
         new NetworkCall().execute(NetworkUtils.buildUrl(sortingOption.endsWith("Popular") ? NetworkEndpoint.MOVIE_POPULAR : NetworkEndpoint.MOVIE_TOP_RATED));
+
     }
 
     @Override
@@ -77,6 +80,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     public class NetworkCall extends AsyncTask<URL, Void, String> {
 
+        boolean noInternet = false;
+
         @Override
         protected void onPreExecute() {
             progressBar.show();
@@ -84,16 +89,22 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         @Override
         protected String doInBackground(URL... urls) {
-            URL url = urls[0];
+            if (NetworkUtils.isOnline()) {
+                URL url = urls[0];
 
-            String result = null;
-            try {
-                result = NetworkUtils.getResponseFromHttpUrl(url);
-            } catch (IOException e) {
-                e.printStackTrace();
+                String result = null;
+                try {
+                    result = NetworkUtils.getResponseFromHttpUrl(url);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                return result;
+            } else {
+                noInternet = true;
             }
 
-            return result;
+            return null;
         }
 
         @Override
@@ -101,6 +112,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             if (s != null && !s.isEmpty()) {
                 List<Movie> movies = JsonUtils.parseMovieListJson(s);
                 setUpAdapter(movies);
+            }
+
+            if (noInternet) {
+                Toast.makeText(getApplicationContext(), R.string.no_connection_error, Toast.LENGTH_LONG).show();
+                progressBar.hide();
             }
 
             progressBar.hide();
