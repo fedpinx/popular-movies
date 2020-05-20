@@ -2,6 +2,7 @@
     <string name="app_name">Popular Movies</string>
     <string name="movie_poster">Movie poster</string>
     <string name="sort_by">Sort by</string>
+    <string name="vote_rating_format">%.1f/10</string>
 
     <string-array name="sorting_options">
         <item>Popular</item>

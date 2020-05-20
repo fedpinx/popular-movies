@@ -29,7 +29,7 @@ public class JsonUtils {
     private final static String MOVIE_RELEASE_DATE = "release_date";
 
 
-    public static List<Movie> parseMovieListJson(String json) {
+    static List<Movie> parseMovieListJson(String json) {
         try {
             List<Movie> listOfMovies = new ArrayList<>();
 
@@ -55,7 +55,7 @@ public class JsonUtils {
                 }
                 movie.setGenreIds(genreIds);
                 movie.setTitle(movieObject.getString(MOVIE_TITLE));
-                movie.setVoteAverage(movieObject.getInt(MOVIE_VOTE_AVERAGE));
+                movie.setVoteAverage(movieObject.getDouble(MOVIE_VOTE_AVERAGE));
                 movie.setOverview(movieObject.getString(MOVIE_OVERVIEW));
                 movie.setReleaseDate(movieObject.getString(MOVIE_RELEASE_DATE));
 

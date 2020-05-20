@@ -1,5 +1,6 @@
 package com.federicopintaluba.popularmovies;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -18,7 +19,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, MovieAdapter.MovieItemClickListener {
 
     private RecyclerView recyclerView;
     private MovieAdapter movieAdapter;
@@ -47,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private void setUpAdapter(List<Movie> movies) {
         if (movieAdapter == null) {
-            movieAdapter = new MovieAdapter(this, movies);
+            movieAdapter = new MovieAdapter(this, movies, this);
             recyclerView.setAdapter(movieAdapter);
         } else {
             movieAdapter.updateDataSource(movies);
@@ -65,6 +66,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private void makeNetworkCall(String sortingOption) {
         new NetworkCall().execute(NetworkUtils.buildUrl(sortingOption.endsWith("Popular") ? NetworkEndpoint.MOVIE_POPULAR : NetworkEndpoint.MOVIE_TOP_RATED));
+    }
+
+    @Override
+    public void onMovieItemClick(Movie movie) {
+        Intent intent = new Intent(MainActivity.this, MovieDetailActivity.class);
+        intent.putExtra(IntentKeys.EXTRA_MOVIE, movie);
+        startActivity(intent);
     }
 
     public class NetworkCall extends AsyncTask<URL, Void, String> {

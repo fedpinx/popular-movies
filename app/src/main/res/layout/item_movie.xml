@@ -7,7 +7,7 @@
         android:id="@+id/poster_image"
         style="@style/FullWidthLayout"
         android:contentDescription="@string/movie_poster"
-        android:minHeight="320dp"
+        android:minHeight="@dimen/list_movie_poster_height"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

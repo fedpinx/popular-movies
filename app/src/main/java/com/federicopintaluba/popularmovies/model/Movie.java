@@ -1,7 +1,21 @@
 package com.federicopintaluba.popularmovies.model;
 
-public class Movie {
+import android.os.Parcel;
+import android.os.Parcelable;
 
+public class Movie implements Parcelable {
+
+    public static final Creator<Movie> CREATOR = new Creator<Movie>() {
+        @Override
+        public Movie createFromParcel(Parcel in) {
+            return new Movie(in);
+        }
+
+        @Override
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
     private long popularity;
     private int voteCount;
     private boolean video;
@@ -13,7 +27,7 @@ public class Movie {
     private String originalTitle;
     private Integer[] genreIds;
     private String title;
-    private int voteAverage;
+    private double voteAverage;
     private String overview;
     private String releaseDate;
 
@@ -22,7 +36,7 @@ public class Movie {
 
     public Movie(long popularity, int voteCount, boolean video, String posterPath, int id, boolean adult,
                  String backdropPath, String originalLanguage, String originalTitle, Integer[] genreIds,
-                 String title, int voteAverage, String overview, String releaseDate) {
+                 String title, double voteAverage, String overview, String releaseDate) {
         this.popularity = popularity;
         this.voteCount = voteCount;
         this.video = video;
@@ -37,6 +51,22 @@ public class Movie {
         this.voteAverage = voteAverage;
         this.overview = overview;
         this.releaseDate = releaseDate;
+    }
+
+    protected Movie(Parcel in) {
+        popularity = in.readLong();
+        voteCount = in.readInt();
+        video = in.readByte() != 0;
+        posterPath = in.readString();
+        id = in.readInt();
+        adult = in.readByte() != 0;
+        backdropPath = in.readString();
+        originalLanguage = in.readString();
+        originalTitle = in.readString();
+        title = in.readString();
+        voteAverage = in.readDouble();
+        overview = in.readString();
+        releaseDate = in.readString();
     }
 
     public long getPopularity() {
@@ -127,11 +157,11 @@ public class Movie {
         this.title = title;
     }
 
-    public int getVoteAverage() {
+    public double getVoteAverage() {
         return voteAverage;
     }
 
-    public void setVoteAverage(int voteAverage) {
+    public void setVoteAverage(double voteAverage) {
         this.voteAverage = voteAverage;
     }
 
@@ -149,5 +179,27 @@ public class Movie {
 
     public void setReleaseDate(String releaseDate) {
         this.releaseDate = releaseDate;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(popularity);
+        dest.writeInt(voteCount);
+        dest.writeByte((byte) (video ? 1 : 0));
+        dest.writeString(posterPath);
+        dest.writeInt(id);
+        dest.writeByte((byte) (adult ? 1 : 0));
+        dest.writeString(backdropPath);
+        dest.writeString(originalLanguage);
+        dest.writeString(originalTitle);
+        dest.writeString(title);
+        dest.writeDouble(voteAverage);
+        dest.writeString(overview);
+        dest.writeString(releaseDate);
     }
 }
