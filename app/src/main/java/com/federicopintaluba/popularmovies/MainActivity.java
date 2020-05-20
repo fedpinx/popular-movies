@@ -1,10 +1,14 @@
 package com.federicopintaluba.popularmovies;
 
-import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.ContentLoadingProgressBar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,10 +18,12 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private RecyclerView recyclerView;
     private MovieAdapter movieAdapter;
+    private ContentLoadingProgressBar progressBar;
+    private String[] sortingOptions = {"Popular", "Top rated"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,16 +34,45 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         recyclerView.setHasFixedSize(true);
 
-        new NetworkCall().execute(NetworkUtils.buildUrl(NetworkEndpoint.DISCOVER_MOVIE));
+        Spinner spinner = findViewById(R.id.sort_by_spinner);
+        ArrayAdapter sortingOptionsArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, sortingOptions);
+        sortingOptionsArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(sortingOptionsArrayAdapter);
+        spinner.setOnItemSelectedListener(this);
+
+        progressBar = findViewById(R.id.progress_bar);
+
+        makeNetworkCall(sortingOptions[0]);
     }
 
     private void setUpAdapter(List<Movie> movies) {
-        movieAdapter = new MovieAdapter(this, movies);
-        recyclerView.setAdapter(movieAdapter);
+        if (movieAdapter == null) {
+            movieAdapter = new MovieAdapter(this, movies);
+            recyclerView.setAdapter(movieAdapter);
+        } else {
+            movieAdapter.updateDataSource(movies);
+        }
     }
 
-    @SuppressLint("StaticFieldLeak")
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        makeNetworkCall(sortingOptions[position]);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+    }
+
+    private void makeNetworkCall(String sortingOption) {
+        new NetworkCall().execute(NetworkUtils.buildUrl(sortingOption.endsWith("Popular") ? NetworkEndpoint.MOVIE_POPULAR : NetworkEndpoint.MOVIE_TOP_RATED));
+    }
+
     public class NetworkCall extends AsyncTask<URL, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            progressBar.show();
+        }
 
         @Override
         protected String doInBackground(URL... urls) {
@@ -59,6 +94,8 @@ public class MainActivity extends AppCompatActivity {
                 List<Movie> movies = JsonUtils.parseMovieListJson(s);
                 setUpAdapter(movies);
             }
+
+            progressBar.hide();
         }
     }
 }

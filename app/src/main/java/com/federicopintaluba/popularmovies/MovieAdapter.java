@@ -45,6 +45,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         return dataSource != null ? dataSource.size() : 0;
     }
 
+    void updateDataSource(List<Movie> movies) {
+        this.dataSource = movies;
+        notifyDataSetChanged();
+    }
+
     class MovieViewHolder extends RecyclerView.ViewHolder {
 
         final ImageView posterImage;
