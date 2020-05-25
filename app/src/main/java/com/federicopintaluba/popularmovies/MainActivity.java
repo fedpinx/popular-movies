@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private RecyclerView recyclerView;
     private MovieAdapter movieAdapter;
     private ContentLoadingProgressBar progressBar;
-    private String[] sortingOptions = {"Popular", "Top rated"};
+    private String[] sortingOptions = {SortingOption.POPULAR, SortingOption.TOP_RATED};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private void makeNetworkCall(String sortingOption) {
 
-        new NetworkCall().execute(NetworkUtils.buildUrl(sortingOption.endsWith("Popular") ? NetworkEndpoint.MOVIE_POPULAR : NetworkEndpoint.MOVIE_TOP_RATED));
+        new NetworkCall().execute(NetworkUtils.buildUrl(sortingOption.contains(SortingOption.POPULAR) ? NetworkEndpoint.MOVIE_POPULAR : NetworkEndpoint.MOVIE_TOP_RATED));
 
     }
 
