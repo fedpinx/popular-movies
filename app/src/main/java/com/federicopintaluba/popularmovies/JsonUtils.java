@@ -1,6 +1,7 @@
 package com.federicopintaluba.popularmovies;
 
 import com.federicopintaluba.popularmovies.model.Movie;
+import com.federicopintaluba.popularmovies.model.MovieReview;
 import com.federicopintaluba.popularmovies.model.MovieTrailer;
 
 import org.json.JSONArray;
@@ -34,6 +35,34 @@ public class JsonUtils {
     private final static String MOVIE_TRAILER_KEY = "key";
     private final static String MOVIE_TRAILER_NAME = "name";
     private final static String MOVIE_TRAILER_TYPE = "type";
+
+    // Movie Review JSON Object attributes
+    private final static String MOVIE_REVIEW_AUTHOR = "author";
+    private final static String MOVIE_REVIEW_CONTENT = "content";
+
+    static List<MovieReview> parseMovieReviewsListJson(String json) {
+        try {
+            List<MovieReview> listOfMovieReviews = new ArrayList<>();
+
+            JSONObject jsonObject = new JSONObject(json);
+            JSONArray resultsArray = jsonObject.getJSONArray(MOVIE_RESULTS);
+            for (int i = 0; i < resultsArray.length(); i++) {
+                final MovieReview movieReview = new MovieReview();
+
+                JSONObject movieReviewObject = resultsArray.getJSONObject(i);
+                movieReview.setAuthor(movieReviewObject.getString(MOVIE_REVIEW_AUTHOR));
+                movieReview.setContent(movieReviewObject.getString(MOVIE_REVIEW_CONTENT));
+
+                listOfMovieReviews.add(movieReview);
+            }
+
+            return listOfMovieReviews;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 
     static List<MovieTrailer> parseMovieTrailersListJson(String json) {
         try {

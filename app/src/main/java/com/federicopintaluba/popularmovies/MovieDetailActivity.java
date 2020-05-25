@@ -10,11 +10,11 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.ContentLoadingProgressBar;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.federicopintaluba.popularmovies.model.Movie;
+import com.federicopintaluba.popularmovies.model.MovieReview;
 import com.federicopintaluba.popularmovies.model.MovieTrailer;
 import com.squareup.picasso.Picasso;
 
@@ -26,7 +26,9 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieTrail
 
     private ContentLoadingProgressBar progressBar;
     private MovieTrailersAdapter movieTrailersAdapter;
+    private MovieReviewsAdapter movieReviewsAdapter;
     private RecyclerView movieTrailersRecyclerView;
+    private RecyclerView movieReviewsRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,22 +36,37 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieTrail
         setContentView(R.layout.activity_movie_detail);
 
         progressBar = findViewById(R.id.progress_bar);
+
         movieTrailersRecyclerView = findViewById(R.id.movie_trailers_recycler_view);
         movieTrailersRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         movieTrailersRecyclerView.setHasFixedSize(true);
+
+        movieReviewsRecyclerView = findViewById(R.id.movie_reviews_recycler_view);
+        movieReviewsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        movieReviewsRecyclerView.setHasFixedSize(true);
 
         Movie movie = getIntent().getParcelableExtra(IntentKeys.EXTRA_MOVIE);
         populateUI(movie);
 
         makeVideosNetworkCall(movie.getId());
+        makeReviewsNetworkCall(movie.getId());
     }
 
-    private void setUpAdapter(List<MovieTrailer> movieTrailers) {
+    private void setUpTrailersAdapter(List<MovieTrailer> movieTrailers) {
         if (movieTrailersAdapter == null) {
             movieTrailersAdapter = new MovieTrailersAdapter(this, movieTrailers, this);
             movieTrailersRecyclerView.setAdapter(movieTrailersAdapter);
         } else {
             movieTrailersAdapter.updateDataSource(movieTrailers);
+        }
+    }
+
+    private void setUpReviewsAdapter(List<MovieReview> movieReviews) {
+        if (movieReviewsAdapter == null) {
+            movieReviewsAdapter = new MovieReviewsAdapter(this, movieReviews);
+            movieReviewsRecyclerView.setAdapter(movieReviewsAdapter);
+        } else {
+            movieReviewsAdapter.updateDataSource(movieReviews);
         }
     }
 
@@ -76,7 +93,11 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieTrail
     }
 
     private void makeVideosNetworkCall(Integer movieId) {
-        new MovieDetailActivity.VideosNetworkCall().execute(NetworkUtils.buildUrl(NetworkEndpoint.MOVIE_VIDEOS, movieId));
+        new MovieDetailActivity.ReviewsNetworkCall().execute(NetworkUtils.buildUrl(NetworkEndpoint.MOVIE_REVIEWS, movieId));
+    }
+
+    private void makeReviewsNetworkCall(Integer movieId) {
+        new MovieDetailActivity.TrailersNetworkCall().execute(NetworkUtils.buildUrl(NetworkEndpoint.MOVIE_VIDEOS, movieId));
     }
 
     @Override
@@ -86,7 +107,7 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieTrail
         startActivity(intent);
     }
 
-    public class VideosNetworkCall extends AsyncTask<URL, Void, String> {
+    public class TrailersNetworkCall extends AsyncTask<URL, Void, String> {
 
         boolean noInternet = false;
 
@@ -119,7 +140,52 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieTrail
         protected void onPostExecute(String s) {
             if (s != null && !s.isEmpty()) {
                 List<MovieTrailer> movieTrailers = JsonUtils.parseMovieTrailersListJson(s);
-                setUpAdapter(movieTrailers);
+                setUpTrailersAdapter(movieTrailers);
+            }
+
+            if (noInternet) {
+                Toast.makeText(getApplicationContext(), R.string.no_connection_error, Toast.LENGTH_LONG).show();
+                progressBar.hide();
+            }
+
+            progressBar.hide();
+        }
+    }
+
+    public class ReviewsNetworkCall extends AsyncTask<URL, Void, String> {
+
+        boolean noInternet = false;
+
+        @Override
+        protected void onPreExecute() {
+            progressBar.show();
+        }
+
+        @Override
+        protected String doInBackground(URL... urls) {
+            if (NetworkUtils.isOnline()) {
+                URL url = urls[0];
+
+                String result = null;
+                try {
+                    result = NetworkUtils.getResponseFromHttpUrl(url);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                return result;
+            } else {
+                noInternet = true;
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            if (s != null && !s.isEmpty()) {
+                List<MovieReview> movieReviews = JsonUtils.parseMovieReviewsListJson(s);
+                setUpReviewsAdapter(movieReviews);
             }
 
             if (noInternet) {

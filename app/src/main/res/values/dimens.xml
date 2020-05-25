@@ -15,4 +15,6 @@
     <dimen name="movie_title_panel_height">140dp</dimen>
     <dimen name="movie_poster_width">188dp</dimen>
     <dimen name="movie_poster_height">280dp</dimen>
+
+    <dimen name="movie_trailer_title_panel_height">60dp</dimen>
 </resources>

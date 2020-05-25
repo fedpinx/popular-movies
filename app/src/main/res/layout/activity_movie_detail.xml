@@ -58,14 +58,38 @@
             app:layout_constraintTop_toBottomOf="@id/movie_poster"
             tools:text="Here goes the movie overview..." />
 
+        <TextView
+            android:id="@+id/movie_trailers_title"
+            style="@style/MovieDetailSubtitle"
+            android:layout_marginTop="@dimen/margin_small"
+            android:text="@string/trailers"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/movie_overview" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/movie_trailers_recycler_view"
-            style="@style/ContainerLayout"
+            style="@style/FullWidthLayout"
+            android:layout_marginTop="2dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/movie_trailers_title" />
+
+        <TextView
+            android:id="@+id/movie_reviews_title"
+            style="@style/MovieDetailSubtitle"
             android:layout_marginTop="@dimen/margin_small"
+            android:text="@string/reviews"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/movie_trailers_recycler_view" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/movie_reviews_recycler_view"
+            style="@style/FullWidthLayout"
+            android:layout_marginTop="2dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/movie_overview" />
+            app:layout_constraintTop_toBottomOf="@id/movie_reviews_title" />
 
         <androidx.core.widget.ContentLoadingProgressBar
             android:id="@+id/progress_bar"

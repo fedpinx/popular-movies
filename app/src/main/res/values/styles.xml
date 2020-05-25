@@ -32,4 +32,8 @@
         <item name="android:paddingEnd">@dimen/padding_medium</item>
         <item name="android:textSize">@dimen/text_size_big</item>
     </style>
+
+    <style name="MovieDetailSubtitle" parent="MovieTitle">
+        <item name="android:layout_height">@dimen/movie_trailer_title_panel_height</item>
+    </style>
 </resources>
