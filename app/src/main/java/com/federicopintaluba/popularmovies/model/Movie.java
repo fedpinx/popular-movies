@@ -16,6 +16,7 @@ public class Movie implements Parcelable {
             return new Movie[size];
         }
     };
+
     private long popularity;
     private int voteCount;
     private boolean video;

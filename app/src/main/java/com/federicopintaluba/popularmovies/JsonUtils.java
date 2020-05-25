@@ -1,6 +1,7 @@
 package com.federicopintaluba.popularmovies;
 
 import com.federicopintaluba.popularmovies.model.Movie;
+import com.federicopintaluba.popularmovies.model.MovieTrailer;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -12,7 +13,7 @@ import java.util.List;
 public class JsonUtils {
 
     // Movie JSON Object attributes
-    private final static String MOVIE_DISCOVER_RESULTS = "results";
+    private final static String MOVIE_RESULTS = "results";
     private final static String MOVIE_POPULARITY = "popularity";
     private final static String MOVIE_VOTE_COUNT = "vote_count";
     private final static String MOVIE_VIDEO = "video";
@@ -28,13 +29,44 @@ public class JsonUtils {
     private final static String MOVIE_OVERVIEW = "overview";
     private final static String MOVIE_RELEASE_DATE = "release_date";
 
+    // Movie Trailer JSON Object attributes
+    private final static String MOVIE_TRAILER_ID = "id";
+    private final static String MOVIE_TRAILER_KEY = "key";
+    private final static String MOVIE_TRAILER_NAME = "name";
+    private final static String MOVIE_TRAILER_TYPE = "type";
+
+    static List<MovieTrailer> parseMovieTrailersListJson(String json) {
+        try {
+            List<MovieTrailer> listOfMovieTrailers = new ArrayList<>();
+
+            JSONObject jsonObject = new JSONObject(json);
+            JSONArray resultsArray = jsonObject.getJSONArray(MOVIE_RESULTS);
+            for (int i = 0; i < resultsArray.length(); i++) {
+                final MovieTrailer movieTrailer = new MovieTrailer();
+
+                JSONObject movieTrailerObject = resultsArray.getJSONObject(i);
+                movieTrailer.setId(movieTrailerObject.getString(MOVIE_TRAILER_ID));
+                movieTrailer.setName(movieTrailerObject.getString(MOVIE_TRAILER_NAME));
+                movieTrailer.setKey(movieTrailerObject.getString(MOVIE_TRAILER_KEY));
+                movieTrailer.setType(movieTrailerObject.getString(MOVIE_TRAILER_TYPE));
+
+                listOfMovieTrailers.add(movieTrailer);
+            }
+
+            return listOfMovieTrailers;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 
     static List<Movie> parseMovieListJson(String json) {
         try {
             List<Movie> listOfMovies = new ArrayList<>();
 
             JSONObject jsonObject = new JSONObject(json);
-            JSONArray resultsArray = jsonObject.getJSONArray(MOVIE_DISCOVER_RESULTS);
+            JSONArray resultsArray = jsonObject.getJSONArray(MOVIE_RESULTS);
             for (int i = 0; i < resultsArray.length(); i++) {
                 final Movie movie = new Movie();
 

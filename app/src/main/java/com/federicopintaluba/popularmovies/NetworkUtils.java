@@ -16,8 +16,13 @@ class NetworkUtils {
 
     private final static String BASE_URL = "https://api.themoviedb.org/3";
     private final static String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/w185";
+    private final static String BASE_TRAILER_URL = "https://www.youtube.com/watch?v=";
     private final static String API_KEY = "";
     private final static String PARAM_API_KEY = "api_key";
+
+    static URL buildUrl(String endpoint, Integer id) {
+        return buildUrl(endpoint.replace("{id}", id.toString()));
+    }
 
     static URL buildUrl(String endpoint) {
         Uri builtUri = Uri.parse(BASE_URL + endpoint).buildUpon()
@@ -36,6 +41,10 @@ class NetworkUtils {
 
     static String buildMoviePosterPath(String originalPosterPath) {
         return BASE_IMAGE_URL + originalPosterPath;
+    }
+
+    static String buildMovieTrailerPath(String movieTrailerKey) {
+        return BASE_TRAILER_URL + movieTrailerKey;
     }
 
     static String getResponseFromHttpUrl(URL url) throws IOException {

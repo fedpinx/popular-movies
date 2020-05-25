@@ -66,9 +66,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void makeNetworkCall(String sortingOption) {
-
         new NetworkCall().execute(NetworkUtils.buildUrl(sortingOption.contains(SortingOption.POPULAR) ? NetworkEndpoint.MOVIE_POPULAR : NetworkEndpoint.MOVIE_TOP_RATED));
-
     }
 
     @Override
