@@ -47,6 +47,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         return dataSource != null ? dataSource.size() : 0;
     }
 
+    void clear() {
+        this.dataSource.clear();
+        notifyDataSetChanged();
+    }
+
     void updateDataSource(List<Movie> movies) {
         this.dataSource = movies;
         notifyDataSetChanged();

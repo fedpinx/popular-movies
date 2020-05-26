@@ -34,6 +34,7 @@
     </style>
 
     <style name="MovieDetailSubtitle" parent="MovieTitle">
+        <item name="android:background">@android:color/transparent</item>
         <item name="android:layout_height">@dimen/movie_trailer_title_panel_height</item>
     </style>
 </resources>

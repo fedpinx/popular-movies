@@ -4,4 +4,5 @@ interface SortingOption {
 
     String POPULAR = "Popular";
     String TOP_RATED = "Top Rated";
+    String FAVORITE = "Favorite";
 }

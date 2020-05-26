@@ -3,6 +3,10 @@ package com.federicopintaluba.popularmovies.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity
 public class Movie implements Parcelable {
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {
@@ -17,6 +21,8 @@ public class Movie implements Parcelable {
         }
     };
 
+    @PrimaryKey(autoGenerate = true)
+    private int primaryKey = 0;
     private long popularity;
     private int voteCount;
     private boolean video;
@@ -26,7 +32,6 @@ public class Movie implements Parcelable {
     private String backdropPath;
     private String originalLanguage;
     private String originalTitle;
-    private Integer[] genreIds;
     private String title;
     private double voteAverage;
     private String overview;
@@ -36,7 +41,7 @@ public class Movie implements Parcelable {
     }
 
     public Movie(long popularity, int voteCount, boolean video, String posterPath, int id, boolean adult,
-                 String backdropPath, String originalLanguage, String originalTitle, Integer[] genreIds,
+                 String backdropPath, String originalLanguage, String originalTitle,
                  String title, double voteAverage, String overview, String releaseDate) {
         this.popularity = popularity;
         this.voteCount = voteCount;
@@ -47,7 +52,6 @@ public class Movie implements Parcelable {
         this.backdropPath = backdropPath;
         this.originalLanguage = originalLanguage;
         this.originalTitle = originalTitle;
-        this.genreIds = genreIds;
         this.title = title;
         this.voteAverage = voteAverage;
         this.overview = overview;
@@ -68,6 +72,14 @@ public class Movie implements Parcelable {
         voteAverage = in.readDouble();
         overview = in.readString();
         releaseDate = in.readString();
+    }
+
+    public int getPrimaryKey() {
+        return primaryKey;
+    }
+
+    public void setPrimaryKey(int primaryKey) {
+        this.primaryKey = primaryKey;
     }
 
     public long getPopularity() {
@@ -140,14 +152,6 @@ public class Movie implements Parcelable {
 
     public void setOriginalTitle(String originalTitle) {
         this.originalTitle = originalTitle;
-    }
-
-    public Integer[] getGenreIds() {
-        return genreIds;
-    }
-
-    public void setGenreIds(Integer[] genreIds) {
-        this.genreIds = genreIds;
     }
 
     public String getTitle() {

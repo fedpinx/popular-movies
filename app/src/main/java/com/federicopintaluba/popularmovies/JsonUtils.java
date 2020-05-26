@@ -114,7 +114,6 @@ public class JsonUtils {
                 for (int j = 0; j < genreIdsArray.length(); j++) {
                     genreIds[j] = genreIdsArray.getInt(j);
                 }
-                movie.setGenreIds(genreIds);
                 movie.setTitle(movieObject.getString(MOVIE_TITLE));
                 movie.setVoteAverage(movieObject.getDouble(MOVIE_VOTE_AVERAGE));
                 movie.setOverview(movieObject.getString(MOVIE_OVERVIEW));

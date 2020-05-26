@@ -7,9 +7,12 @@
     <string name="play_trailer">Play trailer</string>
     <string name="trailers">Trailers</string>
     <string name="reviews">Reviews</string>
+    <string name="no_favorite_movies">You don\'t have any favorite movies yet!</string>
+    <string name="favorite">Favorite</string>
 
     <string-array name="sorting_options">
         <item>Popular</item>
         <item>Top Rated</item>
+        <item>Favorite</item>
     </string-array>
 </resources>

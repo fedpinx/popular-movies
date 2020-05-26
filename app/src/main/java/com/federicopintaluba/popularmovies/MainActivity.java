@@ -7,10 +7,13 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.ContentLoadingProgressBar;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,10 +25,12 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, MovieAdapter.MovieItemClickListener {
 
+    TextView noFavoriteMovies;
     private RecyclerView recyclerView;
     private MovieAdapter movieAdapter;
     private ContentLoadingProgressBar progressBar;
-    private String[] sortingOptions = {SortingOption.POPULAR, SortingOption.TOP_RATED};
+    private String[] sortingOptions = {SortingOption.POPULAR, SortingOption.TOP_RATED, SortingOption.FAVORITE};
+    private FavoriteMoviesViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +47,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         spinner.setAdapter(sortingOptionsArrayAdapter);
         spinner.setOnItemSelectedListener(this);
 
+        noFavoriteMovies = findViewById(R.id.no_favorite_movies);
         progressBar = findViewById(R.id.progress_bar);
+
+        viewModel = new ViewModelProvider(this,
+                new FavoriteMoviesViewModelFactory(FavoriteMovieDatabase.getInstance(this)))
+                .get(FavoriteMoviesViewModel.class);
 
         makeNetworkCall(sortingOptions[0]);
     }
@@ -58,7 +68,32 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        makeNetworkCall(sortingOptions[position]);
+        if (!sortingOptions[position].equals(SortingOption.FAVORITE)) {
+            if (noFavoriteMovies.getVisibility() == View.VISIBLE) {
+                noFavoriteMovies.setVisibility(View.INVISIBLE);
+            }
+
+            makeNetworkCall(sortingOptions[position]);
+        } else {
+            viewModel.getFavoriteMovies().observe(this, new Observer<List<Movie>>() {
+                @Override
+                public void onChanged(List<Movie> favoriteMovies) {
+                    if (favoriteMovies.isEmpty()) {
+                        if (movieAdapter != null) {
+                            movieAdapter.clear();
+                        }
+
+                        noFavoriteMovies.setVisibility(View.VISIBLE);
+                    } else {
+                        if (noFavoriteMovies.getVisibility() == View.VISIBLE) {
+                            noFavoriteMovies.setVisibility(View.INVISIBLE);
+                        }
+
+                        setUpAdapter(favoriteMovies);
+                    }
+                }
+            });
+        }
     }
 
     @Override
